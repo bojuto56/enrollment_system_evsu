@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EVSU Student Enrollment Portal{% endblock %}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #0f2d52;
+            color: white;
+            padding: 10px 24px;
+            font-size: 14px;
+            border-bottom: 4px solid #c8a95b;
+        }
+
+        .topbar span {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #d9e2ec;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-left,
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .site-title {
+            margin: 0;
+            font-size: 20px;
+            color: #0f2d52;
+            font-weight: 700;
+        }
+
+        .site-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .brand-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-btn {
+            background: #0f2d52;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .menu-btn:hover {
+            background: #173d6d;
+        }
+
+        .profile-link {
+            color: #0f2d52;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #cfd8e3;
+            padding: 8px 14px;
+            border-radius: 6px;
+            background: #f8fafc;
+        }
+
+        .profile-link:hover {
+            background: #eef3f8;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -290px;
+            width: 290px;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: 3px 0 16px rgba(0,0,0,0.12);
+            padding: 20px;
+            transition: left 0.25s ease;
+            z-index: 1000;
+            border-right: 1px solid #d9e2ec;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #0f2d52;
+            font-size: 18px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: #1f2937;
+            padding: 12px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .sidebar a:hover {
+            background: #f8fafc;
+            border-color: #d9e2ec;
+            color: #0f2d52;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            float: right;
+            color: #374151;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 45, 82, 0.28);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1180px;
+            margin: 28px auto;
+        }
+
+        .page-header {
+            background: white;
+            border: 1px solid #d9e2ec;
+            border-left: 5px solid #0f2d52;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            border-radius: 8px;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 26px;
+            color: #0f2d52;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            margin: 6px 0 0 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .panel,
+        .auth-box,
+        .list-item,
+        .course-card,
+        .empty-state {
+            background: white;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+        }
+
+        .panel,
+        .list-item,
+        .course-card {
+            padding: 18px;
+        }
+
+        .auth-box {
+            max-width: 460px;
+            margin: 50px auto;
+            padding: 30px;
+        }
+
+        .auth-box h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #0f2d52;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .auth-box input,
+        .auth-box select,
+        .auth-box textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cfd8e3;
+            border-radius: 6px;
+            margin-top: 5px;
+            background: #fff;
+        }
+
+        .auth-box form p {
+            margin-bottom: 14px;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 18px;
+        }
+
+        .course-code {
+            color: #0f2d52;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .course-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 8px 0 10px 0;
+            color: #111827;
+        }
+
+        .course-schedule {
+            color: #4b5563;
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .list-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .empty-state {
+            padding: 30px;
+            text-align: center;
+            color: #4b5563;
+        }
+
+        .messages {
+            margin-bottom: 18px;
+        }
+
+        .message {
+            padding: 12px 14px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border: 1px solid transparent;
+        }
+
+        .success {
+            background: #edf7ed;
+            color: #1d5c2e;
+            border-color: #c9e7cc;
+        }
+
+        .warning {
+            background: #fff8e6;
+            color: #7a5a00;
+            border-color: #f0dfad;
+        }
+
+        .error {
+            background: #fbeaea;
+            color: #8b1e1e;
+            border-color: #efc2c2;
+        }
+
+        .info {
+            background: #eef5fb;
+            color: #184d78;
+            border-color: #cddfec;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #0f2d52;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #173d6d;
+        }
+
+        .btn-secondary {
+            background: #9ca3af;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: #8b1e1e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #721919;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 18px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        table.profile-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.profile-table th,
+        table.profile-table td {
+            text-align: left;
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        table.profile-table th {
+            width: 220px;
+            color: #374151;
+            background: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <span>Eastern Visayas State University — Student Enrollment Portal</span>
+    </div>
+
+    {% if request.user.is_authenticated %}
+        <div class="sidebar" id="sidebar">
+            <button class="close-btn" onclick="closeSidebar()">&times;</button>
+            <h3>Navigation</h3>
+            <a href="{% url 'my_enrollments' %}">Enrolled Subjects</a>
+            <a href="{% url 'course_list' %}">Available Courses</a>
+            <a href="{% url 'my_schedule' %}">Class Schedule</a>
+            <a href="{% url 'profile' %}">Student Profile</a>
+        </div>
+
+        <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+        <div class="navbar">
+            <div class="navbar-left">
+                <button class="menu-btn" onclick="openSidebar()">☰</button>
+                <div class="brand-block">
+                    <h2 class="site-title">EVSU Enrollment System</h2>
+                    <div class="site-subtitle">Official Student Access Portal</div>
+                </div>
+            </div>
+
+            <div class="navbar-right">
+                <a href="{% url 'profile' %}" class="profile-link">Student Profile</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="navbar">
+            <div class="navbar-left">
+                <div class="brand-block">
+                    <h2 class="site-title">EVSU Enrollment System</h2>
+                    <div class="site-subtitle">Official Student Access Portal</div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

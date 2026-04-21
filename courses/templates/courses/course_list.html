@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Available Courses{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Available Courses</h1>
+    <p class="page-subtitle">Browse subject offerings and submit enrollment requests.</p>
+</div>
+
+<div class="course-grid">
+    {% for course in courses %}
+        <div class="course-card">
+            <div class="course-code">{{ course.course_code }}</div>
+            <div class="course-name">{{ course.course_name }}</div>
+
+            {% for sched in course.schedules.all %}
+                <div class="course-schedule">
+                    <strong>{{ sched.day }}</strong> |
+                    {{ sched.start_time|time:"g:i A" }} - {{ sched.end_time|time:"g:i A" }} |
+                    Room {{ sched.room }}
+                </div>
+            {% empty %}
+                <div class="course-schedule">No class schedule has been assigned for this subject.</div>
+            {% endfor %}
+
+            <div style="margin-top: 16px;">
+                {% if course.id in enrolled_course_ids %}
+                    <button class="btn btn-secondary full-width" disabled>Already Enrolled</button>
+                {% else %}
+                    <form method="post" action="{% url 'enroll' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary full-width">Enroll Subject</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-state">No course offerings are currently available.</div>
+    {% endfor %}
+</div>
+{% endblock %}

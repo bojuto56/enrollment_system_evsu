@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Profile{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Student Profile</h1>
+    <p class="page-subtitle">View and manage your registered student information.</p>
+</div>
+
+<div class="panel">
+    <table class="profile-table">
+        <tr>
+            <th>Student ID</th>
+            <td>{{ student.student_id }}</td>
+        </tr>
+        <tr>
+            <th>Full Name</th>
+            <td>{{ student.name }}</td>
+        </tr>
+        <tr>
+            <th>Email Address</th>
+            <td>{{ student.email }}</td>
+        </tr>
+        <tr>
+            <th>Program / Course</th>
+            <td>{{ student.course }}</td>
+        </tr>
+        <tr>
+            <th>Year Level</th>
+            <td>{{ student.year_level }}</td>
+        </tr>
+    </table>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{% url 'edit_profile' %}" class="btn btn-primary">Update Profile</a>
+
+        <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Log Out</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

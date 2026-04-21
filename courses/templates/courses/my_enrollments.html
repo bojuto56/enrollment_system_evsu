@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Enrolled Subjects{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Enrolled Subjects</h1>
+    <p class="page-subtitle">Review the subjects currently recorded under your enrollment.</p>
+</div>
+
+<div class="list-group">
+    {% for enrollment in enrollments %}
+        <div class="list-item">
+            <div class="course-code">{{ enrollment.course.course_code }}</div>
+            <div class="course-name">{{ enrollment.course.course_name }}</div>
+
+            {% for sched in enrollment.course.schedules.all %}
+                <div class="course-schedule">
+                    <strong>{{ sched.day }}</strong> |
+                    {{ sched.start_time|time:"g:i A" }} - {{ sched.end_time|time:"g:i A" }} |
+                    Room {{ sched.room }}
+                </div>
+            {% empty %}
+                <div class="course-schedule">No class schedule has been assigned for this subject.</div>
+            {% endfor %}
+        </div>
+    {% empty %}
+        <div class="empty-state">
+            <h3>Currently you have no subjects enrolled</h3>
+            <p>Please proceed to the Available Courses page to select subjects for enrollment.</p>
+            <div style="margin-top: 16px;">
+                <a href="{% url 'course_list' %}" class="btn btn-primary">Go to Available Courses</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
