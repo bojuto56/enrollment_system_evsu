@@ -19,4 +19,5 @@ username:evsu_enrollment
 pass:12345678
 
 user:
-username:
+username:student1
+pass:test12345
